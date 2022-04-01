@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "outDir": "./dist/",
+        "target":"ES2015"
+    }
+}
+
+// moduleResolution: モジュールの解決方法
+// outDir: 出力先のディレクトリパス
+// target: 出力対象となる JavaScript のバージョン
+// ・今回は ES2015 (ES6) で出力する設定。
+// ・最近では Google Chrome を含む主要なブラウザでサポートしています（Internet Explorer 以外）
