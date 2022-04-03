@@ -1,6 +1,8 @@
 import * as React from 'react'
 import styled from 'styled-components'
 
+const { useState } = React
+
 const Header = styled.header`
     font-size: 1.5rem;
     height: 2rem;
@@ -42,15 +44,26 @@ const Preview = styled.div`
 // Editor という変数は React.FC という型と定義。
 // React.FC で定義された関数は、JSX で <Editor> という形式で呼び出す事ができる
 export const Editor: React.FC = () => {
+    const [text, setText] = useState<string>('')
+    
     return (
         <>
             <Header>
                 Markdown Editor
             </Header>
             <Wrapper>
-                <TextArea value="テキスト入力エリア" />
+                <TextArea
+                    onChange={(event) => {
+                        setText(event.target.value)
+                    }}
+                    value={text}
+                />
                 <Preview>プレビューエリア</Preview>
             </Wrapper>
         </>
     )
 }
+
+// TextAreaのonChange属性にテキストの内容が変更された時に実行される関数を渡す(event)
+// event.target.valueに渡されてテキストの内容が格納される。その内容をsetTextに渡して状態を更新する。
+// value属性にuseStateのtext変数を渡すことでテキストの内容を渡す。
