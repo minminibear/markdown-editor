@@ -1,7 +1,16 @@
 const path = require('path')
+const { webpack } = require('webpack')
 
 module.exports = {
-    entry: './src/index.tsx',
+    mode: 'development',
+    performance: {
+        hints: false,
+        maxEntrypointSize: 1024000,
+        maxAssetSize: 1024000
+    },
+    entry: {
+        app: './src/index.tsx',
+    },
     module: {
         rules: [
             {
@@ -17,7 +26,14 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'index.js',
-        publicPath: 'dist/',
+        publicPath: '/dist/',
+    },
+    devServer: {
+        hot: true,
+        open: true,
+        static: {
+            directory: path.join(__dirname, '/')
+        },
     }
 }
 
@@ -31,3 +47,7 @@ module.exports = {
 
 // output:出力するファイルの設定
 // webpack.config.js の置いてあるディレクトリにある distに対して、index.js で出力。 また、変換する際は JavaScript 内に書かれている相対パスのリソースへ自動的に dist/ を追加。
+
+// devServer
+// hot:ファイルを変更すると自動的にブラウザに反映させるフラグ
+// open:起動時にブラウザで開くフラグ
