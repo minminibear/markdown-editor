@@ -1,6 +1,9 @@
 import * as React from 'react'
 import styled from 'styled-components'
 import { useStateWithStorage } from '../hooks/use_with_storage'
+import ReactMarkdown from 'react-markdown'
+
+const { useState } = React
 
 const Header = styled.header`
     font-size: 1.5rem;
@@ -35,9 +38,11 @@ const TextArea = styled.textarea`
 const Preview = styled.div`
     border-top:1px solid silver;
     bottom: 0;
-    overflow-y: 1rem;
+    overflow-y: scroll;
+    padding: 1rem;
     position: absolute;
     right: 0;
+    top: 0;
     width: 50vw;
 `
 // localStorageでデータの参照・保存に使うキーを決めておく。
@@ -62,7 +67,10 @@ export const Editor: React.FC = () => {
                     onChange={(event) => setText(event.target.value)}
                     value={text}
                 />
-                <Preview>プレビューエリア</Preview>
+
+                <Preview>
+                    <ReactMarkdown children={text} />
+                </Preview>
             </Wrapper>
         </>
     )
