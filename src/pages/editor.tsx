@@ -1,7 +1,6 @@
 import * as React from 'react'
 import styled from 'styled-components'
-
-const { useState } = React
+import { useStateWithStorage } from '../hooks/use_with_storage'
 
 const Header = styled.header`
     font-size: 1.5rem;
@@ -41,10 +40,16 @@ const Preview = styled.div`
     right: 0;
     width: 50vw;
 `
+// localStorageでデータの参照・保存に使うキーを決めておく。
+// 「ファイルパス：値の名前」という命名規則で決める。
+const StorageKey = 'pages/editor:text'
+
 // Editor という変数は React.FC という型と定義。
 // React.FC で定義された関数は、JSX で <Editor> という形式で呼び出す事ができる
 export const Editor: React.FC = () => {
-    const [text, setText] = useState<string>('')
+    const [text, setText] = useStateWithStorage('', StorageKey)
+    // localStorage.getItem は null を返す場合がある
+    // （初回アクセス時など）ので、 || '' をつけて必ず文字列入るようにする
     
     return (
         <>
@@ -52,10 +57,9 @@ export const Editor: React.FC = () => {
                 Markdown Editor
             </Header>
             <Wrapper>
+                {/* コードでテキストが変更される度にlocalStorageへ保存する処理を入れる */}
                 <TextArea
-                    onChange={(event) => {
-                        setText(event.target.value)
-                    }}
+                    onChange={(event) => setText(event.target.value)}
                     value={text}
                 />
                 <Preview>プレビューエリア</Preview>
