@@ -2,18 +2,28 @@ import * as React from 'react'
 import styled from 'styled-components'
 import { useStateWithStorage } from '../hooks/use_with_storage'
 import ReactMarkdown from 'react-markdown'
+import { putMemo } from '../indexeddb/memos'//importできていないっぽいな。
+import { Button } from '../components/button'
 
-const { useState } = React
+// const { useState } = React
 
 const Header = styled.header`
+    align-content: center;
+    display: flex;
     font-size: 1.5rem;
     height: 2rem;
+    justify-content: space-between;
     left: 0;
     line-height: 2rem;
     padding:0.5rem 1rem;
     position: fixed;
     right: 0;
     top: 0;
+`
+const HeaderControl = styled.div`
+    height: 2rem;
+    display: flex;
+    align-content: center;
 `
 
 const Wrapper = styled.div`
@@ -56,10 +66,19 @@ export const Editor: React.FC = () => {
     // localStorage.getItem は null を返す場合がある
     // （初回アクセス時など）ので、 || '' をつけて必ず文字列入るようにする
     
+    const saveMemo = (): void => {
+        putMemo('TITLE', text)
+    }
+
     return (
         <>
             <Header>
                 Markdown Editor
+                <HeaderControl>
+                    <Button onClick={saveMemo}>
+                        保存する
+                    </Button>
+                </HeaderControl>
             </Header>
             <Wrapper>
                 {/* コードでテキストが変更される度にlocalStorageへ保存する処理を入れる */}
