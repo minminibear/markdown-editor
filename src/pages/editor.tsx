@@ -2,10 +2,11 @@ import * as React from 'react'
 import styled from 'styled-components'
 import { useStateWithStorage } from '../hooks/use_with_storage'
 import ReactMarkdown from 'react-markdown'
-import { putMemo } from '../indexeddb/memos'//importできていないっぽいな。
+import { putMemo } from '../indexeddb/memos'
 import { Button } from '../components/button'
+import { SaveModal } from '../components/save_modal'
 
-// const { useState } = React
+const { useState } = React
 
 const Header = styled.header`
     align-content: center;
@@ -65,17 +66,17 @@ export const Editor: React.FC = () => {
     const [text, setText] = useStateWithStorage('', StorageKey)
     // localStorage.getItem は null を返す場合がある
     // （初回アクセス時など）ので、 || '' をつけて必ず文字列入るようにする
-    
-    const saveMemo = (): void => {
-        putMemo('TITLE', text)
-    }
+
+    // モーダルを表示するかのフラグ管理(管理する値はboolean true：表示　false：非表示)
+    const [showModal, setShowModal] = useState(false)
 
     return (
         <>
             <Header>
                 Markdown Editor
                 <HeaderControl>
-                    <Button onClick={saveMemo}>
+                    {/* 保存するボタンを押した場合にモーダル表示のフラグをONにする */}
+                    <Button onClick={() => setShowModal(true)}>
                         保存する
                     </Button>
                 </HeaderControl>
@@ -91,6 +92,20 @@ export const Editor: React.FC = () => {
                     <ReactMarkdown children={text} />
                 </Preview>
             </Wrapper>
+            {/* モーダル表示のフラグがONになっている場合のみ、モーダルを表示する判定式
+            showModal が true の場合は && 以降の処理が実行される */}
+            {showModal && (
+
+                // onSave は、IndexedDBへの保存処理とモーダルを閉じるため showModal へ false をセット
+                // nCancel はモーダルを閉じるだけなので showModal に false をセットする
+                <SaveModal
+                    onSave={(title: string): void => {
+                        putMemo(title, text)
+                        setShowModal(false)
+                    }}
+                    onCancel={() => setShowModal(false)}
+                    />
+            )}
         </>
     )
 }
