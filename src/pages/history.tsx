@@ -9,6 +9,12 @@ import {
 } from 'react-router-dom'
 import styled from "styled-components";
 import { Header } from '../components/header'
+import {
+    getMemos,
+    MemoRecord,
+} from '../indexeddb/memos'
+
+const { useState, useEffect } = React
 
 const HeaderArea = styled.div`
     position: fixed;
@@ -24,7 +30,36 @@ const Wrapper = styled.div`
     top: 3rem;
     padding: 0 1 rem;
 `
+const Memo = styled.button`
+    display: block;
+    background-color: white;
+    border: 1px solid gray;
+    width: 100%;
+    padding: 1rem;
+    margin: 1rem 0;
+    text-align: left;
+`
+
+const MemoTitle = styled.div`
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+`
+
+const MemoText = styled.div`
+    font-size: 0.85rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+`
+
 export const History: React.FC = () => {
+    const [memos, setMemos] = useState<MemoRecord[]>([])
+
+    useEffect(() => {
+        getMemos().then(setMemos)
+    }, [])
+
+
     return (
         <>
         <HeaderArea>
@@ -35,7 +70,13 @@ export const History: React.FC = () => {
             </Header>
         </HeaderArea>
         <Wrapper>
-            TODO: 履歴表示
+            {/* memosの中にある配列の要素をReactの要素に変換する */}
+            {memos.map(memo => (
+                <Memo key={memo.datetime}>
+                    <MemoTitle>{memo.title}</MemoTitle>
+                    <MemoText>{memo.text}</MemoText>
+                </Memo>
+            ))}
         </Wrapper>
         </>
     )

@@ -31,6 +31,14 @@ export const putMemo = async (title: string, text: string): Promise<void> => {
     await memos.put({ datetime, title, text })
 }
 
+// IndexDBからテキスト履歴をリストで取得する
+// 戻り値は配列のため、MemoRecordの末尾に[]をつける
+export const getMemos = (): Promise<MemoRecord[]> => {
+    return memos.orderBy('datetime') // 保存した日時の昇順(古い順)で取得
+        .reverse() // 並び順を逆にする
+        .toArray() // 配列に変換する
+}
+
 // import Dexie from 'dexie'
 
 // export interface MemoRecord {
