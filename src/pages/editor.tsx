@@ -48,12 +48,18 @@ const Preview = styled.div`
 `
 // localStorageでデータの参照・保存に使うキーを決めておく。
 // 「ファイルパス：値の名前」という命名規則で決める。
-const StorageKey = 'pages/editor:text'
+// const StorageKey = 'pages/editor:text'
+
+interface Props {
+    text: string
+    setText: (text: string) => void
+}
 
 // Editor という変数は React.FC という型と定義。
 // React.FC で定義された関数は、JSX で <Editor> という形式で呼び出す事ができる
-export const Editor: React.FC = () => {
-    const [text, setText] = useStateWithStorage('', StorageKey)
+// useStateWithPropsを使ってこのページで管理していた状態を呼び出し元からパラメーターとして渡される処理に変更する。
+export const Editor: React.FC<Props> = (props) => {
+    const { text, setText } = props
     // localStorage.getItem は null を返す場合がある
     // （初回アクセス時など）ので、 || '' をつけて必ず文字列入るようにする
 

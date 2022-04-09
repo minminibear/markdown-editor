@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom'
 import { Editor } from './pages/editor'
 import { History } from './pages/history'
+import { useStateWithStorage } from './hooks/use_with_storage'
 
 const GlobalStyle = createGlobalStyle`
     body * {
@@ -17,21 +18,34 @@ const GlobalStyle = createGlobalStyle`
     }
 `
 
-const Main = (
-    <>
-        <GlobalStyle />
-        <Router>
-            <Routes>
-                <Route path="/editor" element={<Editor />} />
-                <Route path="/history" element={<History />} />
-                <Route path="*" element={<Navigate to="/editor" replace /> } />
-                {/* Navigateは適当なパス 例）/fooにアクセスしても定義されていないので/editorになる */}
-            </Routes>
-        </Router>
-    </>
-)
+const StorageKey = '/editor:text'
 
-render(Main, document.getElementById('app'))
+// useStateを使用するためにMainを関数化する
+const Main: React.FC = () => {
+    const [text, setText] = useStateWithStorage('', StorageKey)
+
+    return (
+        <>
+            <GlobalStyle />
+            <Router>
+                <Routes>
+                    <Route path='/editor' element={<Editor
+                    text={text}
+                    setText={setText}
+                    />}>
+                    </Route>
+                    <Route path='/history' element={<History
+                        setText={setText}
+                    />}>
+                    </Route>
+                    <Route path="*" element={<Navigate to="/editor" replace />} />
+                </Routes>
+            </Router>
+        </>
+    )
+}
+
+render(<Main />, document.getElementById('app'))
 
 // やったこと
 // react-router v6をインストールしているため、教材と一部書き方が異なる箇所がある

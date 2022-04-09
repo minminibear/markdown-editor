@@ -1,10 +1,10 @@
 import * as React from "react";
-// import { useNavigate } from "react-router-dom";
 // import { Button } from '../components/button'
 // useHistory:Reactのカスタムフックでhistoryオブジェクトを返す。
 // historyはブラウザの履歴を扱うためのAPIを提供
 import {
     Link,
+    Navigate,
     useNavigate,
 } from 'react-router-dom'
 import styled from "styled-components";
@@ -52,8 +52,15 @@ const MemoText = styled.div`
     white-space: nowrap;
 `
 
-export const History: React.FC = () => {
+// テキストの状態を更新する関数をパラメータとして受け取るようにする
+interface Props {
+    setText: (text: string) => void
+}
+
+export const History: React.FC<Props> = (props) => {
+    const { setText } = props
     const [memos, setMemos] = useState<MemoRecord[]>([])
+    const navigate = useNavigate()
 
     useEffect(() => {
         getMemos().then(setMemos)
@@ -62,22 +69,30 @@ export const History: React.FC = () => {
 
     return (
         <>
-        <HeaderArea>
-            <Header title="履歴">
-                <Link to="/editor">
-                    エディタに戻る
-                </Link>
-            </Header>
-        </HeaderArea>
-        <Wrapper>
-            {/* memosの中にある配列の要素をReactの要素に変換する */}
-            {memos.map(memo => (
-                <Memo key={memo.datetime}>
-                    <MemoTitle>{memo.title}</MemoTitle>
-                    <MemoText>{memo.text}</MemoText>
-                </Memo>
-            ))}
-        </Wrapper>
+            <HeaderArea>
+                <Header title="履歴">
+                    <Link to="/editor">
+                        エディタに戻る
+                    </Link>
+                </Header>
+            </HeaderArea>
+            <Wrapper>
+                {/* memosの中にある配列の要素をReactの要素に変換する */}
+                {memos.map(memo => (
+                    // メモをクリックした時の処理
+                    // setTextを使用しテキスト履歴のテキストで更新し、navigateでエディタ画面に遷移する。
+                    <Memo
+                        key={memo.datetime}
+                        onClick={() => {
+                            setText(memo.text)
+                            navigate('/editor')
+                        }}
+                    >
+                        <MemoTitle>{memo.title}</MemoTitle>
+                        <MemoText>{memo.text}</MemoText>
+                    </Memo>
+                ))}
+            </Wrapper>
         </>
     )
 }
