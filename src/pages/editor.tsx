@@ -6,34 +6,23 @@ import { putMemo } from '../indexeddb/memos'
 import { Button } from '../components/button'
 import { SaveModal } from '../components/save_modal'
 import { Link } from 'react-router-dom'
+import { Header } from '../components/header'
 
 const { useState } = React
 
-const Header = styled.header`
-    align-content: center;
-    display: flex;
-    font-size: 1.5rem;
-    height: 2rem;
-    justify-content: space-between;
-    left: 0;
-    line-height: 2rem;
-    padding:0.5rem 1rem;
+const Wrapper = styled.div`
+bottom: 0;
+left: 0;
+position: fixed;
+right: 0;
+top: 3rem;
+`
+
+const HeaderArea = styled.div`
     position: fixed;
     right: 0;
     top: 0;
-`
-const HeaderControl = styled.div`
-    height: 2rem;
-    display: flex;
-    align-content: center;
-`
-
-const Wrapper = styled.div`
-    bottom: 0;
     left: 0;
-    position: fixed;
-    right: 0;
-    top: 3rem;
 `
 
 const TextArea = styled.textarea`
@@ -73,9 +62,8 @@ export const Editor: React.FC = () => {
 
     return (
         <>
-            <Header>
-                Markdown Editor
-                <HeaderControl>
+            <HeaderArea>
+                <Header title='Markdown Editor'>
                     {/* 保存するボタンを押した場合にモーダル表示のフラグをONにする */}
                     <Button onClick={() => setShowModal(true)}>
                         保存する
@@ -83,15 +71,13 @@ export const Editor: React.FC = () => {
                     <Link to="/history">
                         履歴をみる
                     </Link>
-                </HeaderControl>
-            </Header>
+                </Header>
+            </HeaderArea>
             <Wrapper>
-                {/* コードでテキストが変更される度にlocalStorageへ保存する処理を入れる */}
                 <TextArea
                     onChange={(event) => setText(event.target.value)}
                     value={text}
-                />
-
+                    />
                 <Preview>
                     <ReactMarkdown children={text} />
                 </Preview>
