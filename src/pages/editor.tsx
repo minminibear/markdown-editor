@@ -7,8 +7,11 @@ import { Button } from '../components/button'
 import { SaveModal } from '../components/save_modal'
 import { Link } from 'react-router-dom'
 import { Header } from '../components/header'
+// import TestWorker from 'worker-loader?inline=no-fallback!../worker/test.ts'
+import TestWorker from 'worker-loader!../worker/test.ts'
 
-const { useState } = React
+const testWorker = new TestWorker()
+const { useState, useEffect } = React
 
 const Wrapper = styled.div`
 bottom: 0;
@@ -65,6 +68,21 @@ export const Editor: React.FC<Props> = (props) => {
 
     // モーダルを表示するかのフラグ管理(管理する値はboolean true：表示　false：非表示)
     const [showModal, setShowModal] = useState(false)
+
+    // let count: number = 1
+    // while (count < 1000000000) {
+    //     count++
+    // } 
+
+    useEffect(() => {
+        testWorker.onmessage = (event) => {
+            console.log('Main thread Received:', event.data)
+        }
+    }, [])
+
+    useEffect(() => {
+        testWorker.postMessage(text)
+    },[text])
 
     return (
         <>
