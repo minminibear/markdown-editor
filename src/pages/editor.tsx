@@ -1,16 +1,15 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import { useStateWithStorage } from '../hooks/use_with_storage'
-import ReactMarkdown from 'react-markdown'
+// import ReactMarkdown from 'react-markdown'
 import { putMemo } from '../indexeddb/memos'
 import { Button } from '../components/button'
 import { SaveModal } from '../components/save_modal'
 import { Link } from 'react-router-dom'
 import { Header } from '../components/header'
-// import TestWorker from 'worker-loader?inline=no-fallback!../worker/test.ts'
-import TestWorker from 'worker-loader!../worker/test.ts'
+// import TestWorker from 'worker-loader!../worker/convert_markdown_worker'
+import ConvertMarkdownWorker from 'worker-loader!../worker/convert_markdown_worker'
 
-const testWorker = new TestWorker()
+const convertMarkdownWorker = new ConvertMarkdownWorker()
 const { useState, useEffect } = React
 
 const Wrapper = styled.div`
@@ -69,19 +68,17 @@ export const Editor: React.FC<Props> = (props) => {
     // モーダルを表示するかのフラグ管理(管理する値はboolean true：表示　false：非表示)
     const [showModal, setShowModal] = useState(false)
 
-    // let count: number = 1
-    // while (count < 1000000000) {
-    //     count++
-    // } 
+    const [html, setHtml] = useState('')
 
+    // WebWorkerから受け取った処理結果(HTML)で状態を更新
     useEffect(() => {
-        testWorker.onmessage = (event) => {
-            console.log('Main thread Received:', event.data)
+        convertMarkdownWorker.onmessage = (event) => {
+            setHtml(event.data.html)
         }
     }, [])
 
     useEffect(() => {
-        testWorker.postMessage(text)
+        convertMarkdownWorker.postMessage(text)
     },[text])
 
     return (
@@ -103,7 +100,8 @@ export const Editor: React.FC<Props> = (props) => {
                     value={text}
                     />
                 <Preview>
-                    <ReactMarkdown children={text} />
+                    {/* HTMLをdivタグ内に表示する */}
+                    <div dangerouslySetInnerHTML={{ __html: html }} />
                 </Preview>
             </Wrapper>
             {/* モーダル表示のフラグがONになっている場合のみ、モーダルを表示する判定式
