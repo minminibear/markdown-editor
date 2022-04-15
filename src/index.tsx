@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import styled from 'styled-components'
 import { createGlobalStyle } from 'styled-components'
 import {
@@ -19,6 +19,10 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const StorageKey = '/editor:text'
+
+const container = document.getElementById('app');
+
+const root = createRoot(container);
 
 // useStateを使用するためにMainを関数化する
 const Main: React.FC = () => {
@@ -45,7 +49,7 @@ const Main: React.FC = () => {
     )
 }
 
-render(<Main />, document.getElementById('app'))
+root.render(<Main />);
 
 // やったこと
 // react-router v6をインストールしているため、教材と一部書き方が異なる箇所がある
