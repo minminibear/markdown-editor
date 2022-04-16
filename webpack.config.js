@@ -25,7 +25,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[contenthash]index.js',
+        filename: 'index.js',
         publicPath: '/dist/',
     },
     devServer: {
